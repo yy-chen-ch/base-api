@@ -53,24 +53,30 @@ app.use(async (ctx, next) => {
 
 
 app.use(router.routes()).use(router.allowedMethods())
-app.listen(8002, () => console.log("run in port 8002"))
+app.listen(8004, () => console.log("run in port 8004"))
 
 router.post('/user/login', async ctx => {
   const { account, password } = ctx.request.body
   const data = await db.user.findAll({ where: { account, password } })
   ctx.body = { code: data.length ? 1 : 0, data }
 })
-// router.post('/sys/get', async ctx => {
-//   const data = await db.sys.findAll()
-//   ctx.body = { code: data.length ? 1 : 0, data: data[0] }
-// })
-// router.post('/sys/edit', async ctx => {
-//   const params = ctx.request.body
-//   const ret = { code: 1, msg: '更新成功' }
-//   const data = { ...params }
-//   ret.data = await db.sys.update(data, { where: { id: data.id } })
-//   ctx.body = { code: data.length ? 1 : 0, data }
-// })
+
+router.post('/alarm/get', async ctx => {
+  const ret = {
+    code: 1
+  }
+  const { company, pageSize = 10, pageNumber = 1 } = ctx.request.body
+  const devs = await db.device.findAll({ include: db.temp })
+
+  ret.data = devs.map(v => {
+    const ret = { ...v.dataValues, ...v.temp.dataValues }
+    delete ret.temp
+    return ret
+  })
+
+  ctx.body = ret
+
+})
 
 const noWhere = ['total', 'pageSize', 'pageNumber']
 

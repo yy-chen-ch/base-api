@@ -4,7 +4,7 @@ const { Sequelize, DataTypes, Transaction, Op } = require('sequelize');
 const config = {
   host: 'localhost',
   prot: '3306',
-  user: 'root',
+  user: 'user',
   password: 'wo123456',
   database: 'liq-alarm',
   dialect: 'mysql'
@@ -45,19 +45,17 @@ const device = seq.define("device", {
   ratedPressure: { type: DataTypes.STRING },
   alarmPressure: { type: DataTypes.STRING },
   curPressure: { type: DataTypes.STRING },
-  liqPoint: { type: DataTypes.STRING },
+  // liqPoint: { type: DataTypes.STRING },
   company: { type: DataTypes.STRING },
-
-
 });
 
 const temp = seq.define("temp", {
-  id: {
-    type: DataTypes.INTEGER,
-    autoIncrement: true,
-    primaryKey: true
-  },
-  deviceLoc: { type: DataTypes.STRING },
+  // id: {
+  //   type: DataTypes.INTEGER,
+  //   autoIncrement: true,
+  //   primaryKey: true
+  // },
+  deviceLoc: { type: DataTypes.STRING, primaryKey: true },
   temp1: { type: DataTypes.STRING },
   temp2: { type: DataTypes.STRING },
   temp3: { type: DataTypes.STRING },
@@ -66,6 +64,9 @@ const temp = seq.define("temp", {
   temp6: { type: DataTypes.STRING },
   temp7: { type: DataTypes.STRING },
 });
+
+device.belongsTo(temp, { foreignKey: 'deviceLoc', targetKey: 'deviceLoc' })
+
 
 const mpa = seq.define("mpa", {
   id: {
